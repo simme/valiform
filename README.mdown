@@ -53,6 +53,8 @@ Notice that rules can also be weighted.
       ),
     );
 
+There is also an option to supply callbacks with arguments by setting *#arguments* to an array containing the arguments you want to get passed to the callback. (see http://php.net/call\_user\_func_array)
+
 That's all!
 
 Please report any bugs/issues that you find! =)
