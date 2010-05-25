@@ -1,0 +1,56 @@
+Valiform - Form validation API
+==============================
+Valiform provides a unified API for modules to supply validation methods for use in Drupal forms. It extends Drupal's own form API.
+
+Valiform makes it easy to reuse form validation code between different sites.
+
+Usage
+------------------------------
+### Providing validation callbacks
+To provide own validation callbacks in your modules you need to implement the *hook\_valiform\_validations()* and return an associative array that defines your callbacks.
+
+`function valiform_valiform_validations() {
+  return array(
+    'email' => array(
+      '#file'     => 'valiform.inc',
+      '#callback' => 'valiform_validate_email',
+    ),
+    'url' => array(
+      '#file'     => 'valiform.inc',
+      '#callback' => 'valiform_validate_url',
+    ),
+  );
+}`
+
+The key is what you use in your forms to associate a field with a specific callback.
+
+### Writing a validation callback
+The function signature for validation callbacks are the same as the callback specified with #element\_validate in Drupal's form API. As it's first argument it takes an array defining the current element, as it second argument it takes a reference to the $form\_state array.
+
+If the validation fails, return a (translated) string describing the error, if no error is encountered you don't need to return anything, but returning *TRUE* looks better! ;)
+
+`function valiform_validate_email($element, &$form_state) {
+  if (!is_valid_email($form_state['values]['email'])) {
+    return t('The email you provided is invalid!');
+  } else {
+    return TRUE;
+  }
+}`
+
+### Making the validation run
+Defining validation rules for elements is as simple as setting *valiform_validate* as the *#element_validate* callback and setting *#validation* to an array containing the names of the validation callbacks you want to run for this element.
+
+Notice that rules can also be weighted.
+
+`$form['fadder']['sp'] = array(
+  '#type'         => 'textfield',
+  '#title'        => 'email',
+  '#element_validate' => array('valiform_validate'),
+  '#validation' => array(
+    'email' => array('#weight' => 7),
+  ),
+);`
+
+That's all!
+
+Please report any bugs/issues that you find! =)
