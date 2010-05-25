@@ -1,0 +1,103 @@
+<?php
+/**
+ * @file
+ * Provides a unified way of validating forms.
+ */
+
+/**
+ * Validate an element
+ * Collects validation available validation methods
+ *
+ * Usage:
+ *  To validate a form as email and run it through
+ *  a custom function, to say, make sure it doesn't
+ *  already exist in database you could do something
+ *  like this:
+ *
+ *  $form['email'] = array(
+ *    '#element_validate' => array('valiform_validate'),
+ *    '#validation'       => array(
+ *      'email' => array('#weight' => 3),
+ *      'my_custom_email_validation' => array('#weight' => 2),
+ *    ),
+ *  );
+ *
+ *  A validation method should return TRUE if the element is valid or a string
+ *  containing the error message if not. Valiform takes care of setting the
+ *  form_error().
+ *
+ *  Validation function signature is identical to this one.
+ *
+ * @param   array     $element
+ * @param   array     &$form_state
+ * @return  void
+ * @throws  InvalidArgumentException if callback information is wrong
+ */
+function valiform_validate($element, &$form_state) {
+  static $validation_hooks = array();
+
+  // If nothing to do, bail
+  if (!isset($element['#validation']) || empty($element['#validation'])) {
+    return TRUE;
+  }
+
+  if (is_string($element['#validation'])) {
+    $validations = array($element['#validation'] => array());
+  } else {
+    $validations = $element['#validation'];
+  }
+  uasort($validations, 'element_sort');
+
+  // Get module contributed validation hooks
+  if (empty($validation_hooks)) {
+    $validators = module_implements('valiform_validations');
+    foreach ($validators as $validator) {
+      $v = call_user_func($validator . '_valiform_validations');
+      foreach ($v as $name => $callback) {
+        $callback['#module'] = $validator;
+        $validation_hooks[$name] = $callback;
+      }
+    }
+  }
+
+  // Run validation
+  $errors = array();
+  foreach ($validations as $validation => $weight) {
+    if (array_key_exists($validation, $validation_hooks)) {
+      $options = $validation_hooks[$validation];
+    } else {
+      throw new InvalidArgumentException('Missing validation callback ' . $validation);
+    }
+
+    if (!empty($options['#file'])) {
+      require_once(drupal_get_path('module', $options['#module']) . '/' . $options['#file']);
+    }
+
+    if (is_callable($options['#callback'])) {
+      $return = call_user_func_array($options['#callback'], array($element, $form_state));
+      if (is_string($return)) {
+        $errors[] = $return;
+      }
+    } else {
+      throw new InvalidArgumentException('Invalid validation callback ' . $options['#callback']);
+    }
+  }
+
+  // Had errors?
+  foreach ($errors as $error) {
+    form_error($element, $error);
+  }
+}
+
+function valiform_valiform_validations() {
+  return array(
+    'email' => array(
+      '#file'     => 'valiform.inc',
+      '#callback' => 'valiform_validate_email',
+    ),
+    'url' => array(
+      '#file'     => 'valiform.inc',
+      '#callback' => 'valiform_validate_url',
+    ),
+  );
+}
