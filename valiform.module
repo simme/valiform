@@ -45,6 +45,13 @@ function valiform_validate($element, &$form_state) {
     $validations = array($element['#validation'] => array());
   } else {
     $validations = $element['#validation'];
+    foreach ($validations as $validation => $options) {
+      // Make sure the validation name is the key
+      if (!is_string($validation) && is_string($options)) {
+        $validations[$options] = NULL;
+        unset($validations[$validation]);
+      }
+    }
   }
   uasort($validations, 'element_sort');
 
