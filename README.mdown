@@ -24,6 +24,8 @@ To provide own validation callbacks in your modules you need to implement the *h
 
 The key is what you use in your forms to associate a field with a specific callback.
 
+*#file* is relative to the module file implementing the hook. Can be omitted if callback is in the same file as the hook.
+
 ### Writing a validation callback
 The function signature for validation callbacks are the same as the callback specified with #element\_validate in Drupal's form API. As it's first argument it takes an array defining the current element, as it second argument it takes a reference to the $form\_state array.
 
