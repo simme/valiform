@@ -9,7 +9,7 @@ Usage
 ### Providing validation callbacks
 To provide own validation callbacks in your modules you need to implement the *hook\_valiform\_validations()* and return an associative array that defines your callbacks.
 
-`function valiform_valiform_validations() {
+´function valiform_valiform_validations() {
   return array(
     'email' => array(
       '#file'     => 'valiform.inc',
@@ -20,7 +20,7 @@ To provide own validation callbacks in your modules you need to implement the *h
       '#callback' => 'valiform_validate_url',
     ),
   );
-}`
+}´
 
 The key is what you use in your forms to associate a field with a specific callback.
 
@@ -29,27 +29,27 @@ The function signature for validation callbacks are the same as the callback spe
 
 If the validation fails, return a (translated) string describing the error, if no error is encountered you don't need to return anything, but returning *TRUE* looks better! ;)
 
-`function valiform_validate_email($element, &$form_state) {
+´function valiform_validate_email($element, &$form_state) {
   if (!is_valid_email($form_state['values]['email'])) {
     return t('The email you provided is invalid!');
   } else {
     return TRUE;
   }
-}`
+}´
 
 ### Making the validation run
 Defining validation rules for elements is as simple as setting *valiform_validate* as the *#element_validate* callback and setting *#validation* to an array containing the names of the validation callbacks you want to run for this element.
 
 Notice that rules can also be weighted.
 
-`$form['fadder']['sp'] = array(
+´$form['fadder']['sp'] = array(
   '#type'         => 'textfield',
   '#title'        => 'email',
   '#element_validate' => array('valiform_validate'),
   '#validation' => array(
     'email' => array('#weight' => 7),
   ),
-);`
+);´
 
 That's all!
 
