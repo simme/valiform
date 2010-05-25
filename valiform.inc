@@ -11,7 +11,10 @@
  * Validate form as email
  */
 function valiform_validate_email($element, &$form_state) {
-
+  $value = trim($form_state['values'][$element['#name']]);
+  if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+    return t('@title is not a valid email.', array('@title' => valiform_element_title($element)));
+  }
 }
 
 /**
@@ -27,8 +30,7 @@ function valiform_validate_url($element, &$form_state) {
 function valiform_validate_num($element, &$form_state) {
   $value = trim($form_state['values'][$element['#name']]);
   if (preg_match('/^[^0-9]*$/', $value)) {
-    $title = empty($element['#title']) ? $element['#name'] : $element['#title'];
-    return t('@title may only contain numbers.', array('@title' => $title));
+    return t('@title may only contain numbers.', array('@title' => valiform_element_title($element)));
   } else {
     return TRUE;
   }
