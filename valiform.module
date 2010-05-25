@@ -112,3 +112,14 @@ function valiform_valiform_validations() {
     ),
   );
 }
+
+/**
+ * Simple helper function to get the #title, or #name if no title,
+ * from an element.
+ *
+ * @param   array     $element
+ * @return  string    $title
+ */
+function valiform_element_title($element) {
+  return empty($element['#title']) ? $element['#name'] : $element['#title'];
+}
