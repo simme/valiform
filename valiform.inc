@@ -17,8 +17,11 @@ function valiform_validate_email($element, &$form_state) {
 /**
  * Validate as only digits
  */
-function valiform_validate_num($element, &$form_state) {
+function valiform_validate_num($element, &$form_state, $allow_empty = FALSE) {
   $value = trim($form_state['values'][$element['#name']]);
+  if ($allow_empty && empty($value)) {
+    return TRUE;
+  }
   if (preg_match('/^[^0-9]*$/', $value)) {
     return t('@title may only contain numbers.', array('@title' => valiform_element_title($element)));
   } else {
