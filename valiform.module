@@ -69,7 +69,7 @@ function valiform_validate($element, &$form_state) {
 
   // Run validation
   $errors = array();
-  foreach ($validations as $validation => $weight) {
+  foreach ($validations as $validation => $args) {
     if (array_key_exists($validation, $validation_hooks)) {
       $options = $validation_hooks[$validation];
     } else {
@@ -81,7 +81,13 @@ function valiform_validate($element, &$form_state) {
     }
 
     if (is_callable($options['#callback'])) {
-      $return = call_user_func_array($options['#callback'], array($element, $form_state));
+      // Add any additional arguments to the validation callback
+      $cbargs = array($element, &$form_state);
+      if (is_array($args['#arguments'])) {
+        $cbargs = array_merge($cbargs, $args['#arguments']);
+      }
+
+      $return = call_user_func_array($options['#callback'], $cbargs);
       if (is_string($return)) {
         $errors[] = $return;
       }
@@ -96,15 +102,16 @@ function valiform_validate($element, &$form_state) {
   }
 }
 
+/**
+ * Provide a few builtin basic validators
+ *
+ * @return  array
+ */
 function valiform_valiform_validations() {
   return array(
     'email' => array(
       '#file'     => 'valiform.inc',
       '#callback' => 'valiform_validate_email',
-    ),
-    'url' => array(
-      '#file'     => 'valiform.inc',
-      '#callback' => 'valiform_validate_url',
     ),
     'digits_only' => array(
       '#file'     => 'valiform.inc',
