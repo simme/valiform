@@ -106,5 +106,9 @@ function valiform_valiform_validations() {
       '#file'     => 'valiform.inc',
       '#callback' => 'valiform_validate_url',
     ),
+    'digits_only' => array(
+      '#file'     => 'valiform.inc',
+      '#callback' => 'valiform_validate_num',
+    ),
   );
 }
