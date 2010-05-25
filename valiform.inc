@@ -1,7 +1,4 @@
 <?php
-/** NOT IMPLEMENTED YET!! **/
-
-
 /**
  * @file
  *  Contains some basic validation methods to ease form development
@@ -15,13 +12,6 @@ function valiform_validate_email($element, &$form_state) {
   if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
     return t('@title is not a valid email.', array('@title' => valiform_element_title($element)));
   }
-}
-
-/**
- * Validate form as url
- */
-function valiform_validate_url($element, &$form_state) {
-
 }
 
 /**
