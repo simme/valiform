@@ -83,6 +83,11 @@ function valiform_validate($element, &$form_state) {
     if (is_callable($options['#callback'])) {
       // Add any additional arguments to the validation callback
       $cbargs = array($element, &$form_state);
+
+      if (isset($args['#arguments']) && !is_array($args['#arguments'])) {
+        $args['#arguments'] = array($args['#arguments']);
+      }
+
       if (is_array($args['#arguments'])) {
         $cbargs = array_merge($cbargs, $args['#arguments']);
       }
