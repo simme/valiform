@@ -130,3 +130,13 @@ function valiform_valiform_validations() {
 function valiform_element_title($element) {
   return empty($element['#title']) ? $element['#name'] : $element['#title'];
 }
+
+/**
+ * Simple helper function to get the #value of an element
+ *
+ * @param   array     $element
+ * @return  string    $title
+ */
+function valiform_element_value($element) {
+  return trim($form_state['values'][$element['#name']]);
+}
