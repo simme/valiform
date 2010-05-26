@@ -17,7 +17,7 @@ function valiform_validate_email($element, &$form_state) {
 /**
  * Validate as only digits
  */
-function valiform_validate_num($element, &$form_state, $allow_empty = FALSE) {
+function valiform_validate_num($element, &$form_state) {
   $value = trim($form_state['values'][$element['#name']]);
   if ($allow_empty && empty($value)) {
     return TRUE;
