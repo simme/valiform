@@ -9,6 +9,9 @@
  */
 function valiform_validate_email($element, &$form_state) {
   $value = trim($form_state['values'][$element['#name']]);
+  if (empty($value)) {
+    return TRUE;
+  }
   if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
     return t('@title is not a valid email.', array('@title' => valiform_element_title($element)));
   }
@@ -19,7 +22,7 @@ function valiform_validate_email($element, &$form_state) {
  */
 function valiform_validate_num($element, &$form_state) {
   $value = trim($form_state['values'][$element['#name']]);
-  if ($allow_empty && empty($value)) {
+  if (empty($value)) {
     return TRUE;
   }
   if (preg_match('/^[^0-9]*$/', $value)) {
